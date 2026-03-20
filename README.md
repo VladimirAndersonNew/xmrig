@@ -25,7 +25,7 @@ C:\xmrig-deps
 ### 2. Clone the Repository
 
 ```bash
-git clone [<YOUR_FORK_URL>](https://github.com/VladimirAndersonNew/xmrig-dll)
+git clone [(https://github.com/VladimirAndersonNew/xmrig-dll)]
 cd xmrig
 ```
 
