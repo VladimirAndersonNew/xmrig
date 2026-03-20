@@ -1,4 +1,4 @@
-# XMRig DLL Build
+# XMRig DLL Buildhttps://github.com/VladimirAndersonNew/xmrig-dll/blob/master/README.md
 
 This fork allows you to build XMRig as a **DLL** instead of an executable.
 
@@ -161,7 +161,7 @@ constexpr const int kMinimumDonateLevel = 1;
 
 ---
 
-## By me a coffee : )
+## Buy me a coffee : )
 
 If you find this fork useful, consider donating:
 
