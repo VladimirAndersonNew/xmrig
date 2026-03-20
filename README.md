@@ -4,7 +4,7 @@ This fork allows you to build XMRig as a **DLL** instead of an executable.
 
 ---
 
-## Build Instructions
+## Build 
 
 ### 1. Download Dependencies
 
@@ -26,7 +26,7 @@ C:\xmrig-deps
 
 ```bash
 git clone https://github.com/VladimirAndersonNew/xmrig-dll
-cd xmrig
+cd xmrig-dll
 ```
 
 ---
@@ -67,7 +67,7 @@ cmake .. -G "Unix Makefiles" -DXMRIG_DEPS="C:/xmrig-deps/gcc/x86"
 
 ---
 
-### 4. Build
+### 4. Build xmrig.dll
 
 ```bash
 cmake --build . --config Release
@@ -78,7 +78,7 @@ The resulting DLL will be located at:
 ```
 build/Release/xmrig.dll
 ```
-### 5. Run 
+## Run 
 
 Loader example using two exported functions: `xmrig_start` and `xmrig_stop`.
 
