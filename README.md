@@ -94,7 +94,7 @@ constexpr const int kMinimumDonateLevel = 1;
 
 ---
 
-## Support the Fork Author
+## By me a coffee : )
 
 If you find this fork useful, consider donating:
 
