@@ -1,37 +1,56 @@
-/* XMRig
- * Copyright (c) 2018-2021 SChernykh   <https://github.com/SChernykh>
- * Copyright (c) 2016-2021 XMRig       <https://github.com/xmrig>, <support@xmrig.com>
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "App.h"
 #include "base/kernel/Entry.h"
 #include "base/kernel/Process.h"
 
+#ifdef _WIN32
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
 
-int main(int argc, char **argv)
-{
-    using namespace xmrig;
+namespace xmrig {
+    // Global variables to store process and app pointers
+    Process* process = nullptr;
+    App* app = nullptr;
+}
 
-    Process process(argc, argv);
-    const Entry::Id entry = Entry::get(process);
-    if (entry) {
-        return Entry::exec(process, entry);
+extern "C" {
+
+    DLL_EXPORT int xmrig_start(int argc, char** argv)
+    {
+        using namespace xmrig;
+
+        // Create the process object with command-line arguments
+        process = new Process(argc, argv);
+
+        // Determine the entry point based on command-line arguments
+        const Entry::Id entry = Entry::get(*process);
+        if (entry) {
+            // If entry is valid, execute and return
+            return Entry::exec(*process, entry);
+        }
+
+        // Initialize the main application
+        app = new App(process);
+
+        // Start the XMRig application
+        return app->exec();
     }
 
-    App app(&process);
+    DLL_EXPORT void xmrig_stop()
+    {
+        using namespace xmrig;
 
-    return app.exec();
+        // Properly stop the XMRig application
+        if (app) {
+            app->onConsoleCommand((char)3); // Simulate sending a CTRL+C
+        }
+
+        // Clean up memory
+        delete app;
+        app = nullptr;
+
+        delete process;
+        process = nullptr;
+    }
 }

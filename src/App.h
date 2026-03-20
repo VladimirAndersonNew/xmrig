@@ -52,11 +52,11 @@ public:
 
     App(Process *process);
     ~App() override;
-
+	void onConsoleCommand(char command) override;
     int exec();
 
 protected:
-    void onConsoleCommand(char command) override;
+    
     void onSignal(int signum) override;
 
 private:
