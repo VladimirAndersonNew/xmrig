@@ -78,6 +78,73 @@ The resulting DLL will be located at:
 ```
 build/Release/xmrig.dll
 ```
+### 5. Run 
+
+Loader example using two exported functions: `xmrig_start` and `xmrig_stop`.
+
+```c
+#include <windows.h>
+#include <stdio.h>
+
+typedef int (*StartFunc)(int argc, char** argv);
+typedef void (*StopFunc)();
+
+DWORD WINAPI MinerThread(LPVOID lpParam) {
+    StartFunc start = (StartFunc)lpParam;
+    char* argv[] = { "xmrig", "--config", "config.json" };
+    int argc = 3;
+    int ret = start(argc, argv);
+    printf("[DEBUG] xmrig_start returned: %d\n", ret);
+    return 0;
+}
+
+int main(int argc, char* argv[]) {
+    // Usage: loader.exe <dll_path> [config_path]
+    if (argc < 2) {
+        printf("Usage: %s <xmrig.dll> [config.json]\n", argv[0]);
+        return 1;
+    }
+
+    const char* dllPath = argv[1];
+    const char* configPath = (argc >= 3) ? argv[2] : "config.json";
+
+    HMODULE hDll = LoadLibraryA(dllPath);
+    if (!hDll) {
+        printf("[ERROR] Failed to load %s. Error: %lu\n", dllPath, GetLastError());
+        return 1;
+    }
+
+    StartFunc start = (StartFunc)GetProcAddress(hDll, "xmrig_start");
+    StopFunc stop = (StopFunc)GetProcAddress(hDll, "xmrig_stop");
+
+    if (!start || !stop) {
+        printf("[ERROR] Functions not found.\n");
+        FreeLibrary(hDll);
+        return 1;
+    }
+
+    printf("[INFO] DLL loaded. Starting miner...\n");
+    HANDLE hThread = CreateThread(NULL, 0, MinerThread, (LPVOID)start, 0, NULL);
+    if (!hThread) {
+        printf("[ERROR] Failed to create thread. Error: %lu\n", GetLastError());
+        FreeLibrary(hDll);
+        return 1;
+    }
+    printf("[INFO] Miner is running. Press Enter to stop...\n");
+    getchar();
+
+    stop();
+    printf("[INFO] Stop signal sent.\n");
+
+    WaitForSingleObject(hThread, INFINITE);
+    CloseHandle(hThread);
+
+    FreeLibrary(hDll);
+    printf("[INFO] Cleanup done.\n");
+
+    return 0;
+}
+```
 
 ---
 
