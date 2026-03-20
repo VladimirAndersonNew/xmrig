@@ -1,4 +1,4 @@
-# XMRig DLL Buildhttps://github.com/VladimirAndersonNew/xmrig-dll/blob/master/README.md
+# XMRig DLL Build
 
 This fork allows you to build XMRig as a **DLL** instead of an executable.
 
